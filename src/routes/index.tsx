@@ -26,6 +26,13 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+import bridalMaggam from "@/assets/blouse-bridal-heavy.jpeg";
+import bridalDetail from "@/assets/blouse-bridal-detail.jpeg";
+import festiveEmbroidery from "@/assets/blouse-festive.jpeg";
+import festiveDetail from "@/assets/blouse-festive-detail.jpeg";
+import everydayBlouse from "@/assets/blouse-simple.jpeg";
+import elegantBlouse from "@/assets/blouse-elegant.jpeg";
+import elegantDetail from "@/assets/blouse-elegant-detail.jpeg";
 
 const WHATSAPP_NUMBER = "919298009020";
 const waLink = (message: string) =>
@@ -41,16 +48,6 @@ const instagramUrl = "https://www.instagram.com/anuembroidery/";
 const youtubeUrl = "https://www.youtube.com/@Anucreations7";
 const shopCoordinates = "16.9412441,82.2315519";
 const mapUrl = `https://www.google.com/maps?q=${shopCoordinates}&z=17&output=embed`;
-const picture = (folder: string, file: string) =>
-  `/AE_Pictures/${folder}/${encodeURIComponent(file)}`;
-const bridalMaggam = picture("Heavy Works", "WhatsApp Image 2026-09-14 at 13.03.00.jpeg");
-const bridalDetail = picture("Heavy Works", "WhatsApp Image 2026-09-14 at 12.50.41.jpeg");
-const festiveEmbroidery = picture("Festive", "WhatsApp Image 2026-09-14 at 12.50.16.jpeg");
-const festiveDetail = picture("Festive", "WhatsApp Image 2026-09-14 at 13.02.51.jpeg");
-const everydayBlouse = picture("Simple", "WhatsApp Image 2026-09-14 at 13.02.59.jpeg");
-const elegantBlouse = picture("Elegant", "WhatsApp Image 2026-09-14 at 13.03.05.jpeg");
-const elegantDetail = picture("Elegant", "WhatsApp Image 2026-09-14 at 13.03.03.jpeg");
-
 const categories = [
   "All Designs",
   "Bridal Heavy Maggam",
@@ -61,50 +58,32 @@ const categories = [
 
 type Category = (typeof categories)[number];
 
-const gallery = [
-  {
-    title: "Temple Heritage",
-    category: "Bridal Heavy Maggam" as Category,
-    image: bridalMaggam,
-    detail: "Zari · kundan · pearl drops",
+const galleryFiles = import.meta.glob("../assets/gallery/**/*.jpeg", {
+  eager: true,
+  import: "default",
+  query: "?url",
+}) as Record<string, string>;
+
+const gallery = Object.entries(galleryFiles).map(([path, image]) => {
+  const parts = path.split("/");
+  const folder = parts[parts.length - 2] ?? "simple";
+  const fileName = (parts[parts.length - 1] ?? "image.jpeg").replace(".jpeg", "");
+  const categoryByFolder: Record<string, Category> = {
+    heavy: "Bridal Heavy Maggam",
+    festive: "Festive Computer Embroidery",
+    simple: "Everyday Elegant",
+    elegant: "Everyday Elegant",
+  };
+  const category = categoryByFolder[folder] ?? "Everyday Elegant";
+
+  return {
+    title: `${folder.charAt(0).toUpperCase()}${folder.slice(1)} ${fileName.split("-").pop()}`,
+    category,
+    image,
+    detail: category === "Bridal Heavy Maggam" ? "Heavy embroidery detail" : "Computer embroidery design",
     position: "object-center",
-  },
-  {
-    title: "Emerald Paisley",
-    category: "Festive Computer Embroidery" as Category,
-    image: festiveEmbroidery,
-    detail: "Fine thread · gold finish",
-    position: "object-center",
-  },
-  {
-    title: "Peacock Garden",
-    category: "Sleeve & Neck Concepts" as Category,
-    image: festiveDetail,
-    detail: "Lotus · peacock · beadwork",
-    position: "object-center",
-  },
-  {
-    title: "Rose Whisper",
-    category: "Everyday Elegant" as Category,
-    image: everydayBlouse,
-    detail: "Delicate thread · minimal finish",
-    position: "object-center",
-  },
-  {
-    title: "Goddess Sleeve",
-    category: "Sleeve & Neck Concepts" as Category,
-    image: bridalDetail,
-    detail: "Temple motif · statement sleeve",
-    position: "object-left",
-  },
-  {
-    title: "Festive Florals",
-    category: "Festive Computer Embroidery" as Category,
-    image: elegantDetail,
-    detail: "Floral vines · paisley sleeves",
-    position: "object-right",
-  },
-];
+  };
+});
 
 const reels = [
   { title: "Heavy embroidery details", id: "Uuds2P-yg7c", image: bridalDetail },
